@@ -1,44 +1,41 @@
 <!doctype html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Telegram Searcher SaaS</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta charset="utf-8">
+    <title>Telegram Finder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/app.css') }}" rel="stylesheet">
 </head>
 <body>
 <div class="app-shell">
-  <aside class="sidebar shadow-sm">
-    <div class="brand">
-      <div class="brand-icon">T</div>
-      <div>
-        <strong>Telegram Finder</strong>
-        <small>v1.2</small>
-      </div>
-    </div>
-    <nav class="nav flex-column gap-1 mt-4">
-      <a class="nav-link active" href="{{ url_for('index') }}">Dashboard</a>
-      <a class="nav-link" href="#recentes">Histórico</a>
-      <a class="nav-link" href="#debug">Debug</a>
-    </nav>
-    <div class="sidebar-note mt-auto">
-      <strong>Dica honesta:</strong><br>
-      Se vier zero, teste com “Públicos + meus” para descobrir se a busca está achando algo antes do filtro.
-    </div>
-  </aside>
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">T</div>
+            <div>
+                <strong>Telegram Finder</strong>
+                <small>v1.5</small>
+            </div>
+        </div>
 
-  <main class="main-content">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-{{ category }} rounded-3 shadow-sm">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-    {% block content %}{% endblock %}
-  </main>
+        <nav class="nav flex-column gap-1">
+            <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a class="nav-link {% if request.endpoint == 'history' %}active{% endif %}" href="{{ url_for('history') }}">Histórico</a>
+            <a class="nav-link {% if request.endpoint == 'debug_page' %}active{% endif %}" href="{{ url_for('debug_page') }}">Debug</a>
+        </nav>
+
+        <div class="sidebar-tip">
+            <strong>Dica honesta:</strong><br>
+            Se vier zero, teste com “públicos + meus” para descobrir se a busca está achando algo antes do filtro.
+        </div>
+    </aside>
+
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero-card shadow-sm">
+    <div>
+        <span>BUSCA PÚBLICA + FILTROS AVANÇADOS</span>
+        <h1>Encontre grupos/canais sem caçar no escuro.</h1>
+        <p>Agora com debug formatado direto na interface, sem mudar a cara do app.</p>
+    </div>
+    <div class="port-pill">porta 5888</div>
+</section>
+
+<div class="row g-4 mt-1">
+    <div class="col-lg-4">
+        <div class="card clean-card shadow-sm p-4">
+            <h5 class="mb-3">Nova busca</h5>
+            <form method="post">
+                <label class="form-label">Telefone Telegram</label>
+                <input class="form-control mb-3" name="phone" value="{{ current_phone or '+5519991979897' }}" required>
+
+                <label class="form-label">Termo</label>
+                <input class="form-control mb-3" name="keyword" placeholder="ex: python brasil, futebol, dua lipa" required>
+
+                <div class="row g-2">
+                    <div class="col-6">
+                        <label class="form-label">Idioma</label>
+                        <select class="form-select" name="language">
+                            <option value="">Qualquer</option>
+                            <option value="pt">Português</option>
+                            <option value="en">Inglês</option>
+                            <option value="es">Espanhol</option>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Tipo</label>
+                        <select class="form-select" name="group_type">
+                            <option value="all">Todos</option>
+                            <option value="groups">Grupos</option>
+                            <option value="channels">Canais</option>
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label">Mín.</label>
+                        <input class="form-control" name="min_members" value="0">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label">Máx.</label>
+                        <input class="form-control" name="max_members">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label">Limite</label>
+                        <input class="form-control" name="limit" value="50">
+                    </div>
+                </div>
+
+                <div class="form-check form-switch mt-3">
+                    <input class="form-check-input" type="checkbox" name="exclude_my_groups" checked>
+                    <label class="form-check-label">Excluir grupos em que já participo</label>
+                </div>
+
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" name="verified_only">
+                    <label class="form-check-label">Apenas verificados</label>
+                </div>
+
+                <button class="btn btn-primary w-100 mt-4">Buscar agora</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <h5 class="section-title">Resultados</h5>
+
+        {% if results %}
+            <div class="export-row mb-3">
+                <a href="{{ url_for('export_csv') }}" class="btn btn-sm btn-light border">CSV</a>
+                <a href="{{ url_for('export_json') }}" class="btn btn-sm btn-light border">JSON</a>
+                <a href="{{ url_for('export_txt') }}" class="btn btn-sm btn-light border">TXT</a>
+            </div>
+
+            <div class="row g-3">
+            {% for g in results %}
+                <div class="col-md-6">
+                    <div class="card clean-card shadow-sm p-3 h-100">
+                        <div class="d-flex justify-content-between gap-2">
+                            <h6 class="mb-1">{{ g.title }}</h6>
+                            {% if g.verified %}<span class="badge text-bg-primary">verificado</span>{% endif %}
+                        </div>
+                        <div class="muted small">{{ g.type }} · {{ g.participants_count }} membros</div>
+                        {% if g.username %}
+                            <a class="btn btn-sm btn-outline-primary mt-3" target="_blank" href="https://t.me/{{ g.username }}">Abrir @{{ g.username }}</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        {% else %}
+            <div class="card clean-card shadow-sm p-5 text-center">
+                <h6>Sem resultados por enquanto.</h6>
+                <p class="mb-0 muted">Teste desligando “Excluir grupos em que já participo”. Se aparecer, o filtro está funcionando; se não aparecer, o Telegram não retornou nada para esse termo/sessão.</p>
+            </div>
+        {% endif %}
+
+        {% include "_debug_panel.html" %}
+
+        <div class="card clean-card shadow-sm p-4 mt-4">
+            <h5 class="mb-3">Histórico recente</h5>
+            <table class="table table-sm align-middle">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Termo</th>
+                        <th>Resultados</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for h in history %}
+                    <tr>
+                        <td>{{ h.created_at }}</td>
+                        <td>{{ h.keyword }}</td>
+                        <td>{{ h.result_count }}</td>
+                        <td><a class="btn btn-sm btn-outline-secondary" href="{{ url_for('view_search', search_id=h.id) }}">ver</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

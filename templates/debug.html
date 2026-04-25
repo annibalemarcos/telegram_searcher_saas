@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero-card shadow-sm">
+    <div>
+        <span>DEBUG</span>
+        <h1>Painel de debug</h1>
+        <p>Mesma interface, agora mostrando os bastidores sem precisar abrir JSON.</p>
+    </div>
+    <div class="port-pill">porta 5888</div>
+</section>
+
+{% include "_debug_panel.html" %}
+{% endblock %}

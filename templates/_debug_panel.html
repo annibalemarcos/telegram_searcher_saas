@@ -1,0 +1,92 @@
+<div id="debug" class="card clean-card shadow-sm p-4 mt-4">
+    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+        <div>
+            <h5 class="mb-1">Debug da busca</h5>
+            <p class="muted mb-0">Resumo formatado do que aconteceu na última busca.</p>
+        </div>
+        <span class="debug-status {{ debug_info.status if debug_info else 'empty' }}">
+            {{ debug_info.status if debug_info and debug_info.status else 'sem busca' }}
+        </span>
+    </div>
+
+    {% if debug_info %}
+        <div class="debug-grid">
+            <div class="debug-box">
+                <small>Termo</small>
+                <strong>{{ debug_info.keyword or '-' }}</strong>
+            </div>
+            <div class="debug-box">
+                <small>Brutos</small>
+                <strong>{{ debug_info.raw_count or 0 }}</strong>
+            </div>
+            <div class="debug-box">
+                <small>Filtrados</small>
+                <strong>{{ debug_info.filtered_count or 0 }}</strong>
+            </div>
+            <div class="debug-box">
+                <small>Excluídos</small>
+                <strong>{{ debug_info.excluded_count or 0 }}</strong>
+            </div>
+        </div>
+
+        {% if debug_info.warnings %}
+            <div class="debug-block mt-3">
+                <h6>Avisos</h6>
+                {% for w in debug_info.warnings %}
+                    <div class="alert alert-warning py-2 mb-2">{{ w }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="row g-3 mt-1">
+            <div class="col-md-6">
+                <div class="debug-block">
+                    <h6>Filtros aplicados</h6>
+                    <table class="table table-sm mb-0">
+                        <tbody>
+                        {% for k, v in debug_info.filters.items() %}
+                            <tr>
+                                <td class="muted">{{ k }}</td>
+                                <td><strong>{{ v }}</strong></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="debug-block">
+                    <h6>Métodos de busca</h6>
+                    {% if debug_info.search_methods %}
+                        <table class="table table-sm mb-0">
+                            <tbody>
+                            {% for k, v in debug_info.search_methods.items() %}
+                                <tr>
+                                    <td class="muted">{{ k }}</td>
+                                    <td><strong>{{ v }}</strong></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="muted mb-0">Nenhum método retornou grupos.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="debug-block mt-3">
+            <h6>Diagnóstico rápido</h6>
+            {% if (debug_info.raw_count or 0) == 0 %}
+                <p class="mb-0">O Telegram não retornou resultados brutos. Teste outro termo, aumente o limite ou verifique se a sessão está autenticada.</p>
+            {% elif (debug_info.filtered_count or 0) == 0 %}
+                <p class="mb-0">A busca encontrou grupos, mas os filtros removeram tudo. Desligue “Excluir grupos em que já participo”, remova idioma/verificado ou reduza mínimo de membros.</p>
+            {% else %}
+                <p class="mb-0">Busca retornou resultados depois dos filtros. Está vivo — respirando e chutando.</p>
+            {% endif %}
+        </div>
+    {% else %}
+        <p class="muted mb-0">Faça uma busca para preencher o debug.</p>
+    {% endif %}
+</div>

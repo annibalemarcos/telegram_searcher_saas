@@ -1,30 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card shadow-sm rounded-3 border-0">
-  <div class="card-body p-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h4 class="fw-bold mb-0">Resultados salvos #{{ search_id }}</h4>
-      <div class="d-flex gap-2">
-        <a class="btn btn-outline-secondary rounded-3" href="{{ url_for('export_results', search_id=search_id, fmt='csv') }}">CSV</a>
-        <a class="btn btn-outline-secondary rounded-3" href="{{ url_for('export_results', search_id=search_id, fmt='json') }}">JSON</a>
-      </div>
+<section class="hero-card shadow-sm">
+    <div>
+        <span>HISTÓRICO</span>
+        <h1>Buscas anteriores</h1>
+        <p>Abra qualquer busca para ver resultados e debug formatado.</p>
     </div>
-    <div class="table-responsive">
-      <table class="table align-middle">
-        <thead><tr><th>Título</th><th>Username</th><th>Membros</th><th>Tipo</th><th></th></tr></thead>
+    <div class="port-pill">porta 5888</div>
+</section>
+
+<div class="card clean-card shadow-sm p-4 mt-4">
+    <table class="table table-sm align-middle">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Termo</th>
+                <th>Brutos</th>
+                <th>Filtrados</th>
+                <th></th>
+            </tr>
+        </thead>
         <tbody>
-          {% for r in rows %}
-          <tr>
-            <td>{{ r.title }}</td>
-            <td>@{{ r.username }}</td>
-            <td>{{ r.participants_count }}</td>
-            <td>{{ r.type }}</td>
-            <td><a class="btn btn-sm btn-outline-primary rounded-3" target="_blank" href="{{ r.link }}">abrir</a></td>
-          </tr>
-          {% endfor %}
+        {% for h in history %}
+            <tr>
+                <td>{{ h.created_at }}</td>
+                <td>{{ h.keyword }}</td>
+                <td>{{ h.raw_count }}</td>
+                <td>{{ h.filtered_count }}</td>
+                <td><a class="btn btn-sm btn-outline-secondary" href="{{ url_for('view_search', search_id=h.id) }}">ver</a></td>
+            </tr>
+        {% endfor %}
         </tbody>
-      </table>
-    </div>
-  </div>
+    </table>
 </div>
 {% endblock %}
